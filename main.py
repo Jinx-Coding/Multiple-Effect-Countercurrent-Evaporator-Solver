@@ -184,6 +184,7 @@ P0 = numpy.array((saturation(temp1), saturation(temp2), saturation(T3)))
 pressure1 = (fsolve(lambda P1: boiling_point(P1, temp1-273.15, system_parameters[5]), P0[0]))
 pressure2 = (fsolve(lambda P2: boiling_point(P2, temp2-273.15, system_parameters[6]), P0[1]))
 pressure3 = (fsolve(lambda P3: boiling_point(P3, T3-273.15, om3), P0[2]))
+SE = (system_parameters[1]+system_parameters[2]+system_parameters[3])/system_parameters[11]
 
 # Post Processing #
 
@@ -236,3 +237,5 @@ print('   P3 = ', end="")
 print('%.2f' % float(pressure3[0]), end="  [kPa]")
 print('   U2 = ', end="")
 print('%.2f' % system_parameters[10], end=" [W/m2K]\n")
+print('steam economy = ', end="")
+print('%.2f' % SE, end=" [-]")
