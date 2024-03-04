@@ -91,20 +91,22 @@ T = [n(1,1:N-1),Tf];
 U = zeros(1,N);
 
 for i = 1 : N
-    U(i) = (4.086*(T(i)-273.15)+72.6)/om(i);
+
+    U(i) = transfer_coefficient(T(i),om(i));
+
 end
 
 hL = zeros(1,N);
 hV = zeros(1,N);
 
 for i = 1 : N
-    hL(i) = (4.184-2.9337*om(i))*(T(i)-273.15);
-    hV(i) = exp((64.87678+11.76476*(log(647.096/T(i)))^0.35 ...
-           -11.94431*(647.096/T(i))^2+6.29015*(647.096/T(i))^3 ...
-           -0.99893*(647.096/T(i))^4)^0.5);
+
+    hL(i) = liquid_h(T(i),om(i));
+    hV(i) = vapour_h(T(i));
+
 end
 
-hF0 = (4.184-2.9337*omF)*(TF-273.15);
+hF0 = liquid_h(TF,omF);
 hF = [hF0,hL(1,1:N-1)];
 
 Ts = [T(1,2:N),TS];
@@ -112,10 +114,9 @@ Ts = [T(1,2:N),TS];
 lambda = zeros(1,N);
 
 for i = 1 : N
-    lambda(i) = 2500.304 -2.2521025*(Ts(i)-273.15) - ...
-                 0.021465847*(Ts(i)-273.15)^1.5 + ...
-                 3.1750136e-4*(Ts(i)-273.15)^2.5 - ...
-                 2.8607959e-5*(Ts(i)-273.15)^3;
+
+    lambda(i) = latent_heat(Ts(i));
+
 end
 
 S = zeros(1,N);
@@ -141,9 +142,42 @@ end
 
 np = [np1,np2];
 
+% Correlations %
+
+    function U = transfer_coefficient(T,om)
+
+        U = (4.086*(T-273.15)+72.6)/om;
+
+    end
+
+    function hL = liquid_h(T,om)
+
+        hL = (4.184-2.9337*om)*(T-273.15);
+
+    end
+
+    function hV = vapour_h(T)
+
+        hV = exp((64.87678+11.76476*(log(647.096/T))^0.35 ...
+              -11.94431*(647.096/T)^2+6.29015*(647.096/T)^3 ...
+              -0.99893*(647.096/T)^4)^0.5);
+
+    end
+
+    function lambda = latent_heat(T)
+
+        lambda = 2500.304 -2.2521025*(T-273.15) - ...
+                 0.021465847*(T-273.15)^1.5 + ...
+                 3.1750136e-4*(T-273.15)^2.5 - ...
+                 2.8607959e-5*(T-273.15)^3;
+
+    end
+
 end
 
 function [T,V,L,om,A,U,S,dT,np] = data(n,F,omF,TS,omf,Tf,TF,N)
+
+% Mass Balances %
 
 % Mass Balances %
 
@@ -171,20 +205,22 @@ T = [n(1,1:N-1),Tf];
 U = zeros(1,N);
 
 for i = 1 : N
-    U(i) = (4.086*(T(i)-273.15)+72.6)/om(i);
+
+    U(i) = transfer_coefficient(T(i),om(i));
+
 end
 
 hL = zeros(1,N);
 hV = zeros(1,N);
 
 for i = 1 : N
-    hL(i) = (4.184-2.9337*om(i))*(T(i)-273.15);
-    hV(i) = exp((64.87678+11.76476*(log(647.096/T(i)))^0.35 ...
-           -11.94431*(647.096/T(i))^2+6.29015*(647.096/T(i))^3 ...
-           -0.99893*(647.096/T(i))^4)^0.5);
+
+    hL(i) = liquid_h(T(i),om(i));
+    hV(i) = vapour_h(T(i));
+
 end
 
-hF0 = (4.184-2.9337*omF)*(TF-273.15);
+hF0 = liquid_h(TF,omF);
 hF = [hF0,hL(1,1:N-1)];
 
 Ts = [T(1,2:N),TS];
@@ -192,10 +228,9 @@ Ts = [T(1,2:N),TS];
 lambda = zeros(1,N);
 
 for i = 1 : N
-    lambda(i) = 2500.304 -2.2521025*(Ts(i)-273.15) - ...
-                 0.021465847*(Ts(i)-273.15)^1.5 + ...
-                 3.1750136e-4*(Ts(i)-273.15)^2.5 - ...
-                 2.8607959e-5*(Ts(i)-273.15)^3;
+
+    lambda(i) = latent_heat(Ts(i));
+
 end
 
 S = zeros(1,N);
@@ -219,15 +254,40 @@ for i = 1 : (N-1)
 
 end
 
-dT = zeros(1,N);
-
-for i = 1 : N
-
-    dT(i) = Ts(i)-T(i);
-
-end
-
 np = [np1,np2];
+
+% Correlations %
+
+    function U = transfer_coefficient(T,om)
+
+        U = (4.086*(T-273.15)+72.6)/om;
+
+    end
+
+    function hL = liquid_h(T,om)
+
+        hL = (4.184-2.9337*om)*(T-273.15);
+
+    end
+
+    function hV = vapour_h(T)
+
+        hV = exp((64.87678+11.76476*(log(647.096/T))^0.35 ...
+              -11.94431*(647.096/T)^2+6.29015*(647.096/T)^3 ...
+              -0.99893*(647.096/T)^4)^0.5);
+
+    end
+
+    function lambda = latent_heat(T)
+
+        lambda = 2500.304 -2.2521025*(T-273.15) - ...
+                 0.021465847*(T-273.15)^1.5 + ...
+                 3.1750136e-4*(T-273.15)^2.5 - ...
+                 2.8607959e-5*(T-273.15)^3;
+
+    end
+
+dT = Ts - T;
 
 end
 
