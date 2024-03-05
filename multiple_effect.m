@@ -20,10 +20,10 @@ F = 98*1000/3600; % (kg/s) %
 
 % ---------------------------- Solution -------------------------------- %
 
-N = 4;
+N = 6;
 n0 = first_guess(TF,Tf,F,N,omF,omf);
 n = fsolve(@(n) parameters(n,F,TF,omF,TS,omf,Tf,N),n0,OPTIONS);
-[T,V,L,om,A,U,S,dT,np] = data(n,F,omF,TS,omf,Tf,TF,N);
+[T,V,L,om,A,U,S,dT,np,logf,err] = data(n,F,omF,TS,omf,Tf,TF,N);
 
 SE = sum(V)/S(N);
 Atot = N*A;
@@ -175,7 +175,7 @@ np = [np1,np2];
 
 end
 
-function [T,V,L,om,A,U,S,dT,np] = data(n,F,omF,TS,omf,Tf,TF,N)
+function [T,V,L,om,A,U,S,dT,np,logf,err] = data(n,F,omF,TS,omf,Tf,TF,N)
 
 % Mass Balances %
 
@@ -288,6 +288,27 @@ np = [np1,np2];
     end
 
 dT = Ts - T;
+
+% Verify %
+
+mbal1 = zeros(1,N);
+mbal2 = zeros(1,N);
+ebal1 = zeros(1,N);
+ebal2 = zeros(1,N);
+
+omF = [omF,om(1,1:N-1)];
+
+for i = 1 : N
+
+    mbal1(i) = F(i)-L(i)-V(i);
+    mbal2(i) = F(i)*omF(i)-L(i)*om(i);
+    ebal1(i) = F(i)*hF(i)+S(i)*lambda(i)-L(i)*hL(i)-V(i)*hV(i);
+    ebal2(i) = U(i)*A*(Ts(i)-T(i))*1e-3 - S(i)*lambda(i);
+
+end
+
+logf = [mbal1,mbal2,ebal1,ebal2];
+err = sum(abs(logf));
 
 end
 
