@@ -80,7 +80,7 @@ end
 om(1) = omF*F(1)/L(1);
 
 for i = 1 : N-1
-    om(i+1) = om(i)*F(i)/L(i);
+    om(i+1) = om(i)*F(i+1)/L(i+1);
 end
 
 om(N) = omf;
@@ -194,7 +194,7 @@ end
 om(1) = omF*F(1)/L(1);
 
 for i = 1 : N-1
-    om(i+1) = om(i)*F(i)/L(i);
+    om(i+1) = om(i)*F(i+1)/L(i+1);
 end
 
 om(N) = omf;
